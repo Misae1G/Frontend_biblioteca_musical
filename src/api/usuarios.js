@@ -1,7 +1,5 @@
 import { api } from './cliente'
-
-// Quita los filtros vacíos para no enviar "?q=&rol=" al backend
-const sinVacios = (params) => Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null))
+import { sinVacios } from './utilidades'
 
 // GET /usuarios -> { usuarios, total, pagina, paginas }
 export const listarUsuarios = async (params, signal) => {

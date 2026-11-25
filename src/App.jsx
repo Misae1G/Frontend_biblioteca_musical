@@ -5,6 +5,9 @@ import Layout from './layout/Layout'
 import { Raiz, RutaConSesion, RutaProtegida, RutaPublica } from './routes/Guardas'
 import EnConstruccion from './pages/EnConstruccion'
 import Usuarios from './pages/admin/Usuarios'
+import CarpetaDetalle from './pages/biblioteca/carpetas/CarpetaDetalle'
+import Carpetas from './pages/biblioteca/carpetas/Carpetas'
+import Catalogos from './pages/biblioteca/catalogos/Catalogos'
 import CambiarPassword from './pages/auth/CambiarPassword'
 import Login from './pages/auth/Login'
 import Recuperar from './pages/auth/Recuperar'
@@ -14,8 +17,6 @@ import { useAuth } from './store/authStore'
 // Módulos que se construyen en los siguientes pasos
 const MODULOS_USUARIO = [
   ['obras', 'Obras'],
-  ['carpetas', 'Carpetas'],
-  ['catalogos', 'Catálogos'],
   ['prestamos', 'Préstamos'],
   ['interpretaciones', 'Interpretaciones'],
   ['reportes', 'Reportes'],
@@ -46,6 +47,9 @@ export default function App() {
 
         <Route element={<RutaProtegida rol="usuario" />}>
           <Route element={<Layout />}>
+            <Route path="/carpetas" element={<Carpetas />} />
+            <Route path="/carpetas/:id" element={<CarpetaDetalle />} />
+            <Route path="/catalogos" element={<Catalogos />} />
             {MODULOS_USUARIO.map(([ruta, nombre]) => (
               <Route key={ruta} path={`/${ruta}/*`} element={<EnConstruccion modulo={nombre} />} />
             ))}
