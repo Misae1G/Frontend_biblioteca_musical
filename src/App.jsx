@@ -1,11 +1,67 @@
-function App() {
+import { useEffect } from 'react'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import Layout from './layout/Layout'
+import { Raiz, RutaConSesion, RutaProtegida, RutaPublica } from './routes/Guardas'
+import EnConstruccion from './pages/EnConstruccion'
+import Usuarios from './pages/admin/Usuarios'
+import CambiarPassword from './pages/auth/CambiarPassword'
+import Login from './pages/auth/Login'
+import Recuperar from './pages/auth/Recuperar'
+import Restablecer from './pages/auth/Restablecer'
+import { useAuth } from './store/authStore'
+
+// Módulos que se construyen en los siguientes pasos
+const MODULOS_USUARIO = [
+  ['obras', 'Obras'],
+  ['carpetas', 'Carpetas'],
+  ['catalogos', 'Catálogos'],
+  ['prestamos', 'Préstamos'],
+  ['interpretaciones', 'Interpretaciones'],
+  ['reportes', 'Reportes'],
+]
+
+export default function App() {
+  const iniciar = useAuth((s) => s.iniciar)
+
+  useEffect(() => {
+    iniciar()
+  }, [iniciar])
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <h1 className="text-3xl font-bold text-gray-700">
-        Sistema de Gestión de la Biblioteca Musical
-      </h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Raiz />} />
+
+        <Route element={<RutaPublica />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/recuperar" element={<Recuperar />} />
+        </Route>
+        {/* El enlace del correo funciona aunque ya haya una sesión abierta */}
+        <Route path="/restablecer/:token" element={<Restablecer />} />
+
+        <Route element={<RutaConSesion />}>
+          <Route path="/cambiar-password" element={<CambiarPassword />} />
+        </Route>
+
+        <Route element={<RutaProtegida rol="usuario" />}>
+          <Route element={<Layout />}>
+            {MODULOS_USUARIO.map(([ruta, nombre]) => (
+              <Route key={ruta} path={`/${ruta}/*`} element={<EnConstruccion modulo={nombre} />} />
+            ))}
+          </Route>
+        </Route>
+
+        <Route element={<RutaProtegida rol="administrador" />}>
+          <Route element={<Layout />}>
+            <Route path="/usuarios" element={<Usuarios />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+
+      <ToastContainer position="top-right" autoClose={4000} newestOnTop closeOnClick pauseOnFocusLoss={false} />
+    </BrowserRouter>
   )
 }
-
-export default App

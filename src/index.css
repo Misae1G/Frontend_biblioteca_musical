@@ -1,9 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;900&family=Roboto:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap');
 
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-body {
-    font-family: 'Roboto', sans-serif;
+/*
+  Paleta y tipografía: se definen SOLO aquí.
+  Para cambiar la apariencia basta con editar estos valores; los componentes usan nombres semánticos.
+*/
+@theme {
+  --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  --font-titulo: 'Lora', Georgia, 'Times New Roman', serif;
+
+  /* Marca (vino) */
+  --color-marca-50: #fbf3f4;
+  --color-marca-100: #f5e1e4;
+  --color-marca-500: #8c2f3d;
+  --color-marca-600: #741f2d;
+  --color-marca-700: #5c1824;
+
+  /* Texto y fondos */
+  --color-tinta: #1d1b1e;
+  --color-tinta-suave: #5f5a60;
+  --color-papel: #faf8f5;
+  --color-linea: #e4dfd8;
+  --color-superficie: #ffffff;
+  --color-hundido: #f3efe9;
+
+  /* Acento latón (pendientes y destacados) */
+  --color-laton: #b08a3e;
+  --color-laton-fondo: #f4ead2;
+  --color-laton-texto: #7a5c1c; /* para texto sobre fondos claros: el latón puro no alcanza contraste */
+  --color-laton-claro: #d6b970; /* para texto sobre fondos vino oscuros */
+
+  /* Estados de disponibilidad */
+  --color-ok: #3f6b4f;
+  --color-ok-fondo: #e6f0e9;
+  --color-info: #3b5b7a;
+  --color-info-fondo: #e4ebf2;
+  --color-aviso: #9a6a14;
+  --color-aviso-fondo: #f6ecd3;
+
+  /* Error / acciones destructivas (siempre con ícono y texto, no solo color) */
+  --color-peligro: #b3261e;
+  --color-peligro-fondo: #fbeae8;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-papel);
+    color: var(--color-tinta);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-titulo);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-marca-500);
+    outline-offset: 2px;
+  }
 }
