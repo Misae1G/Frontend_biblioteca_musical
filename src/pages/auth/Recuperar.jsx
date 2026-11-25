@@ -47,7 +47,7 @@ export default function Recuperar() {
       {mensaje ? (
         <div className="space-y-4">
           <Alerta tipo="exito">{mensaje}</Alerta>
-          <p className="text-sm text-tinta-suave">El enlace del correo vale 30 minutos.</p>
+          <p className="text-sm text-tinta-suave">El enlace del correo vale 15 minutos.</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit(enviar)} noValidate className="space-y-4">
