@@ -7,6 +7,8 @@ import EnConstruccion from './pages/EnConstruccion'
 import Usuarios from './pages/admin/Usuarios'
 import CarpetaDetalle from './pages/biblioteca/carpetas/CarpetaDetalle'
 import Carpetas from './pages/biblioteca/carpetas/Carpetas'
+import ObraDetalle from './pages/biblioteca/obras/ObraDetalle'
+import Obras from './pages/biblioteca/obras/Obras'
 import Catalogos from './pages/biblioteca/catalogos/Catalogos'
 import CambiarPassword from './pages/auth/CambiarPassword'
 import Login from './pages/auth/Login'
@@ -16,7 +18,6 @@ import { useAuth } from './store/authStore'
 
 // Módulos que se construyen en los siguientes pasos
 const MODULOS_USUARIO = [
-  ['obras', 'Obras'],
   ['prestamos', 'Préstamos'],
   ['interpretaciones', 'Interpretaciones'],
   ['reportes', 'Reportes'],
@@ -47,6 +48,8 @@ export default function App() {
 
         <Route element={<RutaProtegida rol="usuario" />}>
           <Route element={<Layout />}>
+            <Route path="/obras" element={<Obras />} />
+            <Route path="/obras/:id" element={<ObraDetalle />} />
             <Route path="/carpetas" element={<Carpetas />} />
             <Route path="/carpetas/:id" element={<CarpetaDetalle />} />
             <Route path="/catalogos" element={<Catalogos />} />

@@ -10,3 +10,12 @@ export const formatearFechaHora = (iso, vacio = '—') => (iso ? formatoFechaHor
 // Fechas de solo día: el backend las guarda como "2026-11-18T00:00:00.000Z".
 // Se toman los primeros 10 caracteres; con new Date() en Ecuador (UTC-5) saldría un día antes.
 export const fechaDia = (iso) => (iso ? String(iso).slice(0, 10) : '')
+
+// Duración en segundos -> "4:05" o "1:02:30"
+export const formatearDuracion = (segundos) => {
+  if (segundos == null) return ''
+  const h = Math.floor(segundos / 3600)
+  const m = Math.floor((segundos % 3600) / 60)
+  const s = String(segundos % 60).padStart(2, '0')
+  return h ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`
+}
