@@ -8,6 +8,7 @@ import Usuarios from './pages/admin/Usuarios'
 import CarpetaDetalle from './pages/biblioteca/carpetas/CarpetaDetalle'
 import Carpetas from './pages/biblioteca/carpetas/Carpetas'
 import ObraDetalle from './pages/biblioteca/obras/ObraDetalle'
+import ObraFormulario from './pages/biblioteca/obras/ObraFormulario'
 import Obras from './pages/biblioteca/obras/Obras'
 import Catalogos from './pages/biblioteca/catalogos/Catalogos'
 import CambiarPassword from './pages/auth/CambiarPassword'
@@ -49,7 +50,9 @@ export default function App() {
         <Route element={<RutaProtegida rol="usuario" />}>
           <Route element={<Layout />}>
             <Route path="/obras" element={<Obras />} />
+            <Route path="/obras/nueva" element={<ObraFormulario />} />
             <Route path="/obras/:id" element={<ObraDetalle />} />
+            <Route path="/obras/:id/editar" element={<ObraFormulario />} />
             <Route path="/carpetas" element={<Carpetas />} />
             <Route path="/carpetas/:id" element={<CarpetaDetalle />} />
             <Route path="/catalogos" element={<Catalogos />} />

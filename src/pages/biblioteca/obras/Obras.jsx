@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { FiPlus } from 'react-icons/fi'
 import { listarObras } from '../../../api/obras'
 import Disponibilidad from '../../../components/biblioteca/Disponibilidad'
 import Alerta from '../../../components/ui/Alerta'
@@ -145,6 +146,15 @@ export default function Obras() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-5">
+      <div className="flex justify-end">
+        <Link
+          to="/obras/nueva"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-marca-600 px-4 py-2 text-sm font-medium text-white hover:bg-marca-700"
+        >
+          <FiPlus aria-hidden="true" />
+          Nueva obra
+        </Link>
+      </div>
       <Pestanas etiqueta="Vistas de obras" pestanas={VISTAS} activa={vista} onCambiar={(id) => cambiar({ vista: id === 'pendientes' ? id : '' })} />
       <PanelPestana id={vista}>
         <div className="space-y-5">

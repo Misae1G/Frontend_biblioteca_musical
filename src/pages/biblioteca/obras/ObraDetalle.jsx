@@ -1,14 +1,15 @@
 import { useCallback, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { FiArrowLeft, FiExternalLink } from 'react-icons/fi'
-import { cambiarEstadoObra, obtenerObra } from '../../../api/obras'
+import { FiArrowLeft, FiEdit2, FiExternalLink, FiPlus } from 'react-icons/fi'
+import { cambiarEstadoObra, eliminarDocumento, obtenerObra } from '../../../api/obras'
 import Disponibilidad from '../../../components/biblioteca/Disponibilidad'
 import Alerta from '../../../components/ui/Alerta'
 import Boton from '../../../components/ui/Boton'
 import Cargando from '../../../components/ui/Cargando'
 import ConfirmDialog from '../../../components/ui/ConfirmDialog'
 import Etiqueta from '../../../components/ui/Etiqueta'
+import Modal from '../../../components/ui/Modal'
 import { useConsulta } from '../../../hooks/useConsulta'
 import {
   ETIQUETA_ESTADO_INTERPRETACION,
@@ -20,6 +21,7 @@ import {
 } from '../../../utils/constantes'
 import { mensajeDeError } from '../../../utils/errores'
 import { fechaDia, formatearDuracion, formatearFechaHora } from '../../../utils/fechas'
+import FormularioDocumento from './FormularioDocumento'
 import Indicadores from './Indicadores'
 
 const enlaceSeguro = (url) => /^https?:\/\//i.test(url)
@@ -98,6 +100,8 @@ export default function ObraDetalle() {
 
   const [confirmando, setConfirmando] = useState(false)
   const [procesando, setProcesando] = useState(false)
+  const [formDoc, setFormDoc] = useState(null) // { documento: null } agrega, { documento } edita
+  const [borrarDoc, setBorrarDoc] = useState(null)
 
   const volver = (
     <Link to="/obras" className="inline-flex items-center gap-1 text-sm text-marca-700 underline underline-offset-2">
@@ -127,6 +131,20 @@ export default function ObraDetalle() {
   const faltantes = obra.pendienteDeCompletar ? faltantesDeObra(obra) : []
   const esMosaico = obra.tipoRegistro === 'mosaico'
 
+  const quitarDocumento = async () => {
+    setProcesando(true)
+    try {
+      await eliminarDocumento(obra._id, borrarDoc._id)
+      toast.success('Documento eliminado')
+      recargar()
+    } catch (e) {
+      toast.error(mensajeDeError(e))
+    } finally {
+      setProcesando(false)
+      setBorrarDoc(null)
+    }
+  }
+
   const cambiarEstado = async () => {
     setProcesando(true)
     try {
@@ -155,9 +173,20 @@ export default function ObraDetalle() {
               <Indicadores obra={obra} />
             </div>
           </div>
-          <Boton variante={obra.activa ? 'peligroSuave' : 'primario'} onClick={() => setConfirmando(true)}>
-            {obra.activa ? 'Inactivar' : 'Activar'}
-          </Boton>
+          <div className="flex flex-wrap gap-2">
+            {obra.activa && (
+              <Link
+                to={`/obras/${obra._id}/editar`}
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-linea bg-superficie px-4 py-2 text-sm font-medium text-tinta hover:bg-hundido"
+              >
+                <FiEdit2 aria-hidden="true" />
+                Editar
+              </Link>
+            )}
+            <Boton variante={obra.activa ? 'peligroSuave' : 'primario'} onClick={() => setConfirmando(true)}>
+              {obra.activa ? 'Inactivar' : 'Activar'}
+            </Boton>
+          </div>
         </div>
         {obra.pendienteDeCompletar && (
           <Alerta tipo="aviso">
@@ -278,23 +307,41 @@ export default function ObraDetalle() {
         {obra.documentos.length === 0 ? (
           <Vacio>No hay documentos digitales.</Vacio>
         ) : (
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-3 text-sm">
             {obra.documentos.map((d) => (
-              <li key={d._id}>
-                {enlaceSeguro(d.enlace) ? (
-                  <a href={d.enlace} target="_blank" rel="noopener noreferrer" className={`${enlaceInterno} inline-flex items-center gap-1`}>
-                    {d.nombre}
-                    <FiExternalLink aria-hidden="true" />
-                    <span className="sr-only">(se abre en una pestaña nueva)</span>
-                  </a>
-                ) : (
-                  <span>{d.nombre}</span>
+              <li key={d._id} className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  {enlaceSeguro(d.enlace) ? (
+                    <a href={d.enlace} target="_blank" rel="noopener noreferrer" className={`${enlaceInterno} inline-flex items-center gap-1`}>
+                      {d.nombre}
+                      <FiExternalLink aria-hidden="true" />
+                      <span className="sr-only">(se abre en una pestaña nueva)</span>
+                    </a>
+                  ) : (
+                    <span>{d.nombre}</span>
+                  )}
+                  {d.tipoArchivo && <span className="text-tinta-suave"> · {d.tipoArchivo}</span>}
+                  {d.observaciones && <p className="text-tinta-suave">{d.observaciones}</p>}
+                </div>
+                {obra.activa && (
+                  <div className="flex gap-1">
+                    <Boton variante="fantasma" tamano="pequeno" onClick={() => setFormDoc({ documento: d })} aria-label={`Editar el documento ${d.nombre}`}>
+                      Editar
+                    </Boton>
+                    <Boton variante="peligroSuave" tamano="pequeno" onClick={() => setBorrarDoc(d)} aria-label={`Eliminar el documento ${d.nombre}`}>
+                      Eliminar
+                    </Boton>
+                  </div>
                 )}
-                {d.tipoArchivo && <span className="text-tinta-suave"> · {d.tipoArchivo}</span>}
-                {d.observaciones && <p className="text-tinta-suave">{d.observaciones}</p>}
               </li>
             ))}
           </ul>
+        )}
+        {obra.activa && (
+          <Boton variante="secundario" onClick={() => setFormDoc({ documento: null })}>
+            <FiPlus aria-hidden="true" />
+            Agregar documento
+          </Boton>
         )}
       </Seccion>
 
@@ -348,6 +395,35 @@ export default function ObraDetalle() {
         {obra.creadaPor?.nombre && ` por ${obra.creadaPor.nombre}`} · Última modificación {formatearFechaHora(obra.updatedAt)}
         {obra.modificadaPor?.nombre && ` por ${obra.modificadaPor.nombre}`}
       </p>
+
+      <Modal abierto={Boolean(formDoc)} onCerrar={() => setFormDoc(null)} titulo={formDoc?.documento ? 'Editar documento' : 'Agregar documento'}>
+        {formDoc && (
+          <FormularioDocumento
+            obraId={obra._id}
+            documento={formDoc.documento}
+            onCerrar={() => setFormDoc(null)}
+            onGuardado={() => {
+              toast.success(formDoc.documento ? 'Documento actualizado' : 'Documento agregado')
+              setFormDoc(null)
+              recargar()
+            }}
+          />
+        )}
+      </Modal>
+
+      <ConfirmDialog
+        abierto={Boolean(borrarDoc)}
+        titulo="Eliminar documento"
+        textoConfirmar="Eliminar"
+        variante="peligro"
+        cargando={procesando}
+        onConfirmar={quitarDocumento}
+        onCerrar={() => setBorrarDoc(null)}
+      >
+        <p>
+          ¿Eliminar el documento <strong className="text-tinta">{borrarDoc?.nombre}</strong>? Solo se quita el enlace de esta obra; el archivo no se borra.
+        </p>
+      </ConfirmDialog>
 
       <ConfirmDialog
         abierto={confirmando}
