@@ -19,3 +19,6 @@ export const formatearDuracion = (segundos) => {
   const s = String(segundos % 60).padStart(2, '0')
   return h ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`
 }
+
+// Fecha de hoy (AAAA-MM-DD) en Ecuador, para valores por defecto de <input type="date">
+export const hoyEcuador = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Guayaquil' })

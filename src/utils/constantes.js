@@ -49,3 +49,9 @@ export const faltantesDeObra = (obra) => {
   if (obra.tipoRegistro !== 'mosaico') requeridos.push(['autor', 'autor'])
   return requeridos.filter(([campo]) => !obra[campo]).map(([, etiqueta]) => etiqueta)
 }
+
+export const ETIQUETA_ESTADO_FISICO = {
+  buen_estado: 'Buen estado',
+  deteriorado: 'Deteriorado',
+  danado: 'Dañado',
+}
