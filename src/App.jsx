@@ -1,9 +1,8 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Layout from './layout/Layout'
 import { Raiz, RutaConSesion, RutaProtegida, RutaPublica } from './routes/Guardas'
-import EnConstruccion from './pages/EnConstruccion'
 import Usuarios from './pages/admin/Usuarios'
 import CarpetaDetalle from './pages/biblioteca/carpetas/CarpetaDetalle'
 import Carpetas from './pages/biblioteca/carpetas/Carpetas'
@@ -20,11 +19,10 @@ import Login from './pages/auth/Login'
 import Recuperar from './pages/auth/Recuperar'
 import Restablecer from './pages/auth/Restablecer'
 import { useAuth } from './store/authStore'
+import Cargando from './components/ui/Cargando'
 
-// Módulos que se construyen en los siguientes pasos
-const MODULOS_USUARIO = [
-  ['reportes', 'Reportes'],
-]
+// Recharts pesa mucho: solo se descarga al entrar a Reportes
+const Reportes = lazy(() => import('./pages/biblioteca/reportes/Reportes'))
 
 export default function App() {
   const iniciar = useAuth((s) => s.iniciar)
@@ -55,6 +53,7 @@ export default function App() {
             <Route path="/obras/nueva" element={<ObraFormulario />} />
             <Route path="/obras/:id" element={<ObraDetalle />} />
             <Route path="/obras/:id/editar" element={<ObraFormulario />} />
+            <Route path="/reportes" element={<Suspense fallback={<Cargando texto="Cargando reportes…" />}><Reportes /></Suspense>} />
             <Route path="/interpretaciones" element={<Interpretaciones />} />
             <Route path="/interpretaciones/:id" element={<InterpretacionDetalle />} />
             <Route path="/prestamos" element={<Prestamos />} />
@@ -62,9 +61,6 @@ export default function App() {
             <Route path="/carpetas" element={<Carpetas />} />
             <Route path="/carpetas/:id" element={<CarpetaDetalle />} />
             <Route path="/catalogos" element={<Catalogos />} />
-            {MODULOS_USUARIO.map(([ruta, nombre]) => (
-              <Route key={ruta} path={`/${ruta}/*`} element={<EnConstruccion modulo={nombre} />} />
-            ))}
           </Route>
         </Route>
 
