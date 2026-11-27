@@ -22,3 +22,10 @@ export const formatearDuracion = (segundos) => {
 
 // Fecha de hoy (AAAA-MM-DD) en Ecuador, para valores por defecto de <input type="date">
 export const hoyEcuador = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Guayaquil' })
+
+// Suma días a una fecha AAAA-MM-DD sin pasar por la zona horaria del navegador
+export const sumarDias = (dia, n) => new Date(Date.parse(`${dia}T00:00:00.000Z`) + n * 86400000).toISOString().slice(0, 10)
+
+// "2026-11-18" -> "miércoles, 18 de noviembre"
+export const etiquetaDia = (dia) =>
+  new Date(`${dia}T00:00:00.000Z`).toLocaleDateString('es-EC', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })

@@ -55,3 +55,12 @@ export const ETIQUETA_ESTADO_FISICO = {
   deteriorado: 'Deteriorado',
   danado: 'Dañado',
 }
+
+// Cambios de estado que permite el backend para una interpretación.
+// Cancelada y no interpretada son finales; una interpretada marcada por error puede volver a programada.
+export const TRANSICIONES_INTERPRETACION = {
+  programada: ['interpretada', 'cancelada', 'no_interpretada'],
+  interpretada: ['programada'],
+  cancelada: [],
+  no_interpretada: [],
+}
